@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Recipe</title>
+</head>
+<body>
+    <h1>New Recipe</h1>
+    <form method="post" action="{% url 'addRecipe' %}">
+        {% csrf_token %}
+        <label>Dish name: <input name="dishName"></label><br>
+        <label>Creator name: <input name="creatorName"></label><br>
+
+        <label>Ingredients: </label>
+        <div id="ingredients-list">
+            <div class="ingredient-row">
+                <input name="ingredients">
+                <button type="button" class="remove-ingredient" title="Remove">✖</button>
+            </div>
+        </div>
+
+        <button type="button" id="add-ingredient">Add ingredient</button><br>
+
+        <label>Estimated time to serve (minutes): <input name="estimatedTime" type="number"></label><br>
+        <label>Directions: <textarea name="directions"></textarea></label><br>
+        <button type="submit">Create</button>
+    </form>
+
+    <script>
+        const ingredientList = document.getElementById('ingredients-list');
+        const addButton = document.getElementById('add-ingredient');
+        function makeIngredientRow(value=''){
+            const row = document.createElement('div');
+            row.className = 'ingredient-row';
+
+            const input = document.createElement('input');
+            input.name = 'ingredients';
+            input.value = value;
+
+            const remove = document.createElement('button');
+            remove.type = 'button';
+            remove.className = 'remove-ingredient';
+            remove.title = 'Remove';
+            remove.textContent = '✖'
+
+            remove.addEventListener('click', () => row.remove());
+
+            row.appendChild(input);
+            row.appendChild(remove);
+            return row;
+        }
+
+        // add initial event handlers for any existing rows
+        Array.from(ingredientList.querySelectorAll('.ingredient-row')).forEach(row => {
+            const remove = row.querySelector('.remove-ingredient');
+            if (remove) remove.addEventListener('click', () => row.remove());
+        });
+        
+        addButton.addEventListener('click', () => {
+            ingredientList.appendChild(makeIngredientRow('', `ingredient ${ingredientList.children.length + 1}`));
+            // focus the new input
+            ingredientList.lastElementChild.querySelector('input').focus();
+        });
+    </script>
+
+</body>
+</html>
